@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Blockly Code Editor</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/blockly/blockly.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="./blocks.js"></script>
+
+  <style>
+    body {
+      background-color: #fff;
+      font-family: sans-serif;
+    }
+    h1 {
+      font-weight: normal;
+      font-size: 140%;
+    }
+  </style>
+</head>
+<body>
+  <div id="blocklyDiv" style="height: 600px; width: 800px;"></div>
+
+  <script>
+  	var workspace = Blockly.inject('blocklyDiv', {
+			toolbox: toolbox
+		});
+    function generateCode() {
+        var code = Blockly.JavaScript.workspaceToCode(workspace);
+        // document.getElementById('code').value = code;
+        axios.post('http://localhost:8080/execute', JSON.stringify({
+            js_code: code
+        }), {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+            })
+            .then(response => {
+                console.log(response.data);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        }
+  </script>
+  	<button onclick="generateCode()">Generate Code</button>
+
+
+</body>
+</html>
